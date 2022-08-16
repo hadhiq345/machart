@@ -1,0 +1,38 @@
+<h1>welcome to Machart</h1><br>
+<div id="demo"></div>
+<form action="/action_page.php">
+    <label for="places">Choose a place:</label>
+    <select name="places" id="places">
+    </select>
+    <br><br>
+  </form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    var x = document.getElementById("demo");
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+      }
+    }
+    
+    function showPosition(position) {
+      x.innerHTML = "Latitude: " + position.coords.latitude +
+      "<br>Longitude: " + position.coords.longitude;
+      $.get("/fetch-location?latitude="+position.coords.latitude+"&longitude="+position.coords.longitude, function(data, status){
+      console.log("Data: " + data + "\nStatus: " + status);
+      $.each(data, function(i, j) {
+    console.log(i)
+    $('#places').append(`<option data-details="${JSON.stringify(j)}" value="${i}">${j.name} </option>`);
+
+    // and the rest of your code
+    });
+    });
+    }
+    getLocation();
+    $("#places").change(function(){
+        console.log($(this).find(':selected').data('details'));
+    });
+    </script>
